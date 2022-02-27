@@ -73,15 +73,17 @@ module.exports = class MediaQueryPlugin {
 
                     const css = store.getMedia(mediaKey);
                     const queries = store.getQueries(mediaKey);
+                    const hashMatch = this.options.filename.match(/\[(content|chunk)?hash(:(\d){1,2})?\]/)
+                    const hashDigestLength = hashMatch? hashMatch[3] : compiler.options.output.hashDigestLength
 
                     // generate hash and use for [hash] within basename
-                    const hash = interpolateName({}, `[hash:${compiler.options.output.hashDigestLength}]`, { content: css });
+                    const hash = interpolateName({}, `[hash:${hashDigestLength}]`, { content: css });
 
                     // compute basename according to filename option
                     // while considering hash
                     const basename = this.options.filename
                                         .replace('[name]', mediaKey)
-                                        .replace(/\[(content|chunk)?hash\]/, hash)
+                                        .replace(/\[(content|chunk)?hash(:(\d){1,2})?\]/, hash)
                                         .replace(/\.[^.]+$/, '');
 
                     // if there's no chunk for the extracted media, create one
